@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -16,6 +17,9 @@ public class TreasureHunter {
     private Town currentTown;
     private Hunter hunter;
     private boolean hardMode;
+
+    private boolean testMode;
+    private boolean gameOver;
 
     /**
      * Constructs the Treasure Hunter game.
@@ -40,18 +44,30 @@ public class TreasureHunter {
      * Creates a hunter object at the beginning of the game and populates the class member variable with it.
      */
     private void welcomePlayer() {
-        System.out.println("Welcome to TREASURE HUNTER!");
-        System.out.println("Going hunting for the big treasure, eh?");
+        System.out.println("Welcome to" + Colors.YELLOW + " TREASURE HUNTER!");
+        System.out.println(Objects.requireNonNull(Colors.GREEN + "Going hunting for the big treasure, eh?" + Colors.RESET));
         System.out.print("What's your name, Hunter? ");
         String name = SCANNER.nextLine().toLowerCase();
-
-        // set hunter instance variable
-        hunter = new Hunter(name, 10);
-
-        System.out.print("Hard mode? (y/n): ");
+        System.out.print(Colors.RED + "Hard mode?" + Colors.RESET + " (y/n): ");
         String hard = SCANNER.nextLine().toLowerCase();
         if (hard.equals("y")) {
             hardMode = true;
+        } else if (hard.endsWith("test")) {
+            testMode = true;
+        }
+        if (testMode) {
+            hunter = new Hunter(name);
+        } else {
+            hunter = new Hunter(name, 10);
+        }
+
+    }
+
+    private void checkGameOver() {
+        if (hunter.getHunterGold() < 0) {
+            gameOver = true;
+        } else {
+            gameOver = false;
         }
     }
 
@@ -93,8 +109,7 @@ public class TreasureHunter {
      */
     private void showMenu() {
         String choice = "";
-
-        while (!choice.equals("x")) {
+        while (!choice.equals("x") || gameOver) {
             System.out.println();
             System.out.println(currentTown.getLatestNews());
             System.out.println("***");
@@ -110,6 +125,9 @@ public class TreasureHunter {
             choice = SCANNER.nextLine().toLowerCase();
             processChoice(choice);
         }
+
+
+
     }
 
     /**
@@ -133,4 +151,5 @@ public class TreasureHunter {
             System.out.println("Yikes! That's an invalid option! Try again.");
         }
     }
+
 }

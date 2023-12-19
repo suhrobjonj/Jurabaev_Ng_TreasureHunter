@@ -22,9 +22,24 @@ public class Hunter {
         gold = startingGold;
     }
 
+    public Hunter(String hunterName) {
+        this.hunterName = hunterName;
+        kit = new String[5]; // only 5 possible items can be stored in kit
+        addItem("water");
+        addItem("rope");
+        addItem("machete");
+        addItem("horse");
+        addItem("boat");
+        gold = 100;
+    }
+
     //Accessors
     public String getHunterName() {
         return hunterName;
+    }
+
+    public int getHunterGold() {
+        return gold;
     }
 
     /**
@@ -34,9 +49,6 @@ public class Hunter {
      */
     public void changeGold(int modifier) {
         gold += modifier;
-        if (gold < 0) {
-            gold = 0;
-        }
     }
 
     /**
