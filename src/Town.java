@@ -7,8 +7,10 @@
 public class Town {
     // instance variables
     private Hunter hunter;
-    private Shop shop;
-    private Terrain terrain;
+    private final Shop shop;
+    private final Terrain terrain;
+    private final String[] treasures;
+    boolean townSearched;
     private String printMessage;
     private boolean toughTown;
     private boolean dugGold = false;
@@ -31,6 +33,10 @@ public class Town {
 
         // higher toughness = more likely to be a tough town
         toughTown = (Math.random() < toughness);
+
+        //a random treasure will be selected for each town
+        treasures = new String[]{"a crown", "a trophy", "a gem", "dust"};
+        townSearched = false;
     }
 
     public String getLatestNews() {
@@ -65,16 +71,17 @@ public class Town {
             printMessage = "You used your " + item + " to cross the " + terrain.getTerrainName() + ".";
             if (checkItemBreak()) {
                 hunter.removeItemFromKit(item);
-                printMessage += "\nUnfortunately, you lost your " + item + ".";
+                printMessage += "\nUnfortunately, your " + item + " broke.";
             }
-            dugGold = false;
+
             return true;
-        } else {
-            printMessage = "You can't leave town, " + hunter.getHunterName() + ". You don't have a " + terrain.getNeededItem() + ".";
-            return false;
         }
 
+        printMessage = "You can't leave town, " + hunter.getHunterName() + ". You don't have a " + terrain.getNeededItem() + ".";
+        return false;
     }
+
+
 
     /**
      * Handles calling the enter method on shop whenever the user wants to access the shop.
@@ -115,6 +122,19 @@ public class Town {
         }
     }
 
+    public String lookForTreasure() {
+        int treasureIndx = (int) (Math.random() * 3);
+        if (townSearched) {
+            return "You have already searched this town.";
+        } else if (hunter.addTreasure(treasures[treasureIndx], treasureIndx)) {
+            townSearched = true;
+            return "You found " + treasures[treasureIndx] + "!";
+        } else {
+            townSearched = true;
+            return "You found " + treasures[treasureIndx] + " but you already have one so you throw it away.";
+        }
+    }
+
     public void digForGold() {
         if (hunter.hasItemInKit("shovel")) {
             if (!dugGold) {
@@ -135,6 +155,7 @@ public class Town {
         }
 
     }
+
 
     public String toString() {
         return "This nice little town is surrounded by " + terrain.getTerrainName() + ".";
