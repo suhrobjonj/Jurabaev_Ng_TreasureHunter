@@ -11,6 +11,7 @@ public class Town {
     private Terrain terrain;
     private String printMessage;
     private boolean toughTown;
+    private boolean dugGold = false;
 
     /**
      * The Town Constructor takes in a shop and the surrounding terrain, but leaves the hunter as null until one arrives.
@@ -64,14 +65,15 @@ public class Town {
             printMessage = "You used your " + item + " to cross the " + terrain.getTerrainName() + ".";
             if (checkItemBreak()) {
                 hunter.removeItemFromKit(item);
-                printMessage += "\nUnfortunately, your " + item + " broke.";
+                printMessage += "\nUnfortunately, you lost your " + item + ".";
             }
-
+            dugGold = false;
             return true;
+        } else {
+            printMessage = "You can't leave town, " + hunter.getHunterName() + ". You don't have a " + terrain.getNeededItem() + ".";
+            return false;
         }
 
-        printMessage = "You can't leave town, " + hunter.getHunterName() + ". You don't have a " + terrain.getNeededItem() + ".";
-        return false;
     }
 
     /**
@@ -111,6 +113,27 @@ public class Town {
                 hunter.changeGold(-goldDiff);
             }
         }
+    }
+
+    public void digForGold() {
+        if (hunter.hasItemInKit("shovel")) {
+            if (!dugGold) {
+                int chance = (int) (Math.random() * 100) + 1;
+                if (chance < 50) {
+                    int gold = (int) (Math.random() * 20) + 1;
+                    hunter.changeGold(gold);
+                    printMessage = "\nYou dug up " + gold + " gold!";
+                } else {
+                    printMessage = "\nYou dug but only found dirt";
+                }
+                dugGold = true;
+            } else {
+                printMessage = "\nYou already dug for gold in this town.";
+            }
+        } else {
+            printMessage = "\nYou can't dig for gold without a shovel";
+        }
+
     }
 
     public String toString() {
