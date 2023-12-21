@@ -14,6 +14,8 @@ public class Town {
     private String printMessage;
     private boolean toughTown;
     private boolean dugGold = false;
+    private boolean itemCanBreak = true;
+    private boolean samuraiMode = false;
 
     /**
      * The Town Constructor takes in a shop and the surrounding terrain, but leaves the hunter as null until one arrives.
@@ -21,9 +23,15 @@ public class Town {
      * @param shop The town's shoppe.
      * @param toughness The surrounding terrain.
      */
-    public Town(Shop shop, double toughness) {
+    public Town(Shop shop, double toughness, String mode) {
         this.shop = shop;
         this.terrain = getNewTerrain();
+        if (mode.equals("e")) {
+            itemCanBreak = false;
+        }
+        if (mode.equals("s")) {
+            samuraiMode = true;
+        }
 
         // the hunter gets set using the hunterArrives method, which
         // gets called from a client class
@@ -38,6 +46,7 @@ public class Town {
         treasures = new String[]{"a crown", "a trophy", "a gem", "dust"};
         townSearched = false;
     }
+
 
     public String getLatestNews() {
         return printMessage;
@@ -69,7 +78,7 @@ public class Town {
         if (canLeaveTown) {
             String item = terrain.getNeededItem();
             printMessage = "You used your " + item + " to cross the " + terrain.getTerrainName() + ".";
-            if (checkItemBreak()) {
+            if (checkItemBreak() && itemCanBreak) {
                 hunter.removeItemFromKit(item);
                 printMessage += "\nUnfortunately, your " + item + " broke.";
             }
@@ -108,16 +117,21 @@ public class Town {
         if (Math.random() > noTroubleChance) {
             printMessage = "You couldn't find any trouble";
         } else {
-            printMessage = "You want trouble, stranger!  You got it!\nOof! Umph! Ow!\n";
             int goldDiff = (int) (Math.random() * 10) + 1;
-            if (Math.random() > noTroubleChance) {
-                printMessage += "Okay, stranger! You proved yer mettle. Here, take my gold.";
-                printMessage += "\nYou won the brawl and receive " + goldDiff + " gold.";
-                hunter.changeGold(goldDiff);
+            if (!hunter.hasItemInKit("sword")) {
+                printMessage = "You want trouble, stranger!  You got it!\nOof! Umph! Ow!\n";
+                if (Math.random() > noTroubleChance) {
+                    printMessage += "Okay, stranger! You proved yer mettle. Here, take my gold.";
+                    printMessage += "\nYou won the brawl and receive " + goldDiff + " gold.";
+                    hunter.changeGold(goldDiff);
+                } else {
+                    printMessage += "That'll teach you to go lookin' fer trouble in MY town! Now pay up!";
+                    printMessage += "\nYou lost the brawl and pay " + goldDiff + " gold.";
+                    hunter.changeGold(-goldDiff);
+                }
             } else {
-                printMessage += "That'll teach you to go lookin' fer trouble in MY town! Now pay up!";
-                printMessage += "\nYou lost the brawl and pay " + goldDiff + " gold.";
-                hunter.changeGold(-goldDiff);
+                printMessage = "You want trouble, stranger!  You got it!\nOh um... no...not the samurai!\n..here's all of my gold\n";
+                hunter.changeGold(goldDiff);
             }
         }
     }

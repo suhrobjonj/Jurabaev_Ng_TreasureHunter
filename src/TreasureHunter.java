@@ -17,9 +17,11 @@ public class TreasureHunter {
     private Town currentTown;
     private Hunter hunter;
     private boolean hardMode;
-
+    private boolean easyMode;
     private boolean testMode;
     private boolean gameOver;
+    private boolean samuraiMode;
+    private String mode;
 
     /**
      * Constructs the Treasure Hunter game.
@@ -48,19 +50,28 @@ public class TreasureHunter {
         System.out.println(Objects.requireNonNull(Colors.GREEN + "Going hunting for the big treasure, eh?" + Colors.RESET));
         System.out.print("What's your name, Hunter? ");
         String name = SCANNER.nextLine().toLowerCase();
-        System.out.print(Colors.RED + "Hard mode?" + Colors.RESET + " (y/n): ");
+        System.out.print(Colors.RED + "Select mode?" + Colors.RESET + " (e/n/h): ");
         String hard = SCANNER.nextLine().toLowerCase();
-        if (hard.equals("y")) {
+        if (hard.equals("h")) {
             hardMode = true;
-        } else if (hard.endsWith("test")) {
-            testMode = true;
-        }
-        if (testMode) {
+            hunter = new Hunter(name, 10, "h");
+            mode = "h";
+        } else if (hard.equals("test")) {
             hunter = new Hunter(name);
-        } else {
-            hunter = new Hunter(name, 10);
+        } else if (hard.equals("e")) {
+            easyMode = true;
+            mode = "e";
+            hunter = new Hunter(name, 20, "e");
+        } else if (hard.equals("s")) {
+            samuraiMode = true;
+            hunter = new Hunter(name, 10, "s");
+            mode = "s";
         }
 
+    }
+
+    public boolean getEasyMode() {
+        return easyMode;
     }
 
     private void checkGameOver() {
@@ -83,17 +94,20 @@ public class TreasureHunter {
 
             // and the town is "tougher"
             toughness = 0.75;
+        } else if (easyMode) {
+            markdown = 0;
+            toughness = .2;
         }
 
         // note that we don't need to access the Shop object
         // outside of this method, so it isn't necessary to store it as an instance
         // variable; we can leave it as a local variable
-        Shop shop = new Shop(markdown);
+        Shop shop = new Shop(markdown, mode);
 
         // creating the new Town -- which we need to store as an instance
         // variable in this class, since we need to access the Town
         // object in other methods of this class
-        currentTown = new Town(shop, toughness);
+        currentTown = new Town(shop, toughness, mode);
 
         // calling the hunterArrives method, which takes the Hunter
         // as a parameter; note this also could have been done in the

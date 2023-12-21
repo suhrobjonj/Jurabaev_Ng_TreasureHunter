@@ -22,15 +22,19 @@ public class Shop {
     // instance variables
     private double markdown;
     private Hunter customer;
+    private boolean secretMode = false;
 
     /**
      * The Shop constructor takes in a markdown value and leaves customer null until one enters the shop.
      *
      * @param markdown Percentage of markdown for selling items in decimal format.
      */
-    public Shop(double markdown) {
+    public Shop(double markdown, String secretMode) {
         this.markdown = markdown;
         customer = null; // is set in the enter method
+        if (secretMode.equals("s")) {
+            this.secretMode = true;
+        }
     }
 
     /**
@@ -91,6 +95,9 @@ public class Shop {
         str += "Horse: " + HORSE_COST + " gold\n";
         str += "Boat: " + BOAT_COST + " gold\n";
         str += "Shovel: " + SHOVEL_COST + " gold\n";
+        if (secretMode) {
+            str += "Sword: 0 gold\n";
+        }
         return str;
     }
 
@@ -103,8 +110,10 @@ public class Shop {
         int costOfItem = checkMarketPrice(item, true);
         if (customer.buyItem(item, costOfItem)) {
             System.out.println("Ye' got yerself a " + item + ". Come again soon.");
-        } else {
+        } else if (!customer.hasItemInKit("sword")){
             System.out.println("Hmm, either you don't have enough gold or you've already got one of those!");
+        } else {
+            System.out.println("Just take anything ye want! I don't want any trouble...");
         }
     }
 
