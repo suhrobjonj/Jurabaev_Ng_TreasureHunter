@@ -15,6 +15,7 @@ public class Shop {
     private static final int HORSE_COST = 12;
     private static final int BOAT_COST = 20;
     private static final int SHOVEL_COST = 8;
+    private static final int SWORD_COST = 0;
 
     // static variables
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -53,7 +54,7 @@ public class Shop {
             System.out.print("What're you lookin' to buy? ");
             String item = SCANNER.nextLine().toLowerCase();
             int cost = checkMarketPrice(item, true);
-            if (cost == 0) {
+            if (cost == 0 && customer.hasItemInKit("sword")) {
                 System.out.println("We ain't got none of those.");
             } else {
                 System.out.print("It'll cost you " + cost + " gold. Buy it (y/n)? ");
@@ -96,7 +97,7 @@ public class Shop {
         str += "Boat: " + BOAT_COST + " gold\n";
         str += "Shovel: " + SHOVEL_COST + " gold\n";
         if (secretMode) {
-            str += "Sword: 0 gold\n";
+            str += "Sword: " + SWORD_COST + " gold\n";
         }
         return str;
     }
@@ -113,6 +114,7 @@ public class Shop {
         } else if (!customer.hasItemInKit("sword")){
             System.out.println("Hmm, either you don't have enough gold or you've already got one of those!");
         } else {
+            customer.buyItem(item, 0);
             System.out.println("Just take anything ye want! I don't want any trouble...");
         }
     }
@@ -167,6 +169,8 @@ public class Shop {
             return BOOTS_COST;
         } else if (item.equals("shovel")) {
             return SHOVEL_COST;
+        } else if (item.equals("sword")) {
+            return SWORD_COST;
         } else {
             return 0;
         }

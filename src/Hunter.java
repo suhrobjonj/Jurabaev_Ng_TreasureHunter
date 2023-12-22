@@ -19,7 +19,11 @@ public class Hunter {
      */
     public Hunter(String hunterName, int startingGold, String mode) {
         this.hunterName = hunterName;
-        kit = new String[5]; // only 5 possible items can be stored in kit
+        if (mode.equals("s")) {
+            kit = new String[8];
+        } else {
+            kit = new String[7];
+        }
         treasures = new String[3]; // only 3 possible treasures can be obtained
         gold = startingGold;
     }
@@ -43,6 +47,9 @@ public class Hunter {
     public int getHunterGold() {
         return gold;
     }
+    public String[] getTreasures() {
+        return treasures;
+    }
 
 
     /**
@@ -62,10 +69,15 @@ public class Hunter {
      * @return true if the item is successfully bought.
      */
     public boolean buyItem(String item, int costOfItem) {
-        if (costOfItem == 0 || gold < costOfItem || hasItemInKit(item)) {
-            return false;
+        if (item.equals("sword")) {
+            addItem(item);
+            return true;
+        } else if (hasItemInKit("sword") && costOfItem == 0){
+            addItem(item);
+            return true;
+        } else if (costOfItem == 0 || gold < costOfItem || hasItemInKit(item)) {
+                return false;
         }
-
         gold -= costOfItem;
         addItem(item);
         return true;
@@ -116,7 +128,6 @@ public class Hunter {
             kit[idx] = item;
             return true;
         }
-
         return false;
     }
 
@@ -171,6 +182,18 @@ public class Hunter {
         String str = hunterName + " has " + gold + " gold";
         if (!kitIsEmpty()) {
             str += " and " + getInventory();
+        }
+        str += "\nTreasures found: ";
+        int toBeFound = 0;
+        for (int i = 0; i < treasures.length; i++) {
+            if (treasures[i] != null) {
+                str += treasures[i] + " ";
+            } else {
+                toBeFound += 1;
+            }
+        }
+        if (toBeFound == 3) {
+            str += "none";
         }
         return str;
     }
