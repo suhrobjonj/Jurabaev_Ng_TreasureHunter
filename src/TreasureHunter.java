@@ -62,6 +62,9 @@ public class TreasureHunter {
             easyMode = true;
             mode = "e";
             hunter = new Hunter(name, 20, "e");
+        } else if (hard.equals("n")) {
+            mode = "n";
+            hunter = new Hunter(name, 10, "n");
         } else if (hard.equals("s")) {
             samuraiMode = true;
             hunter = new Hunter(name, 10, "s");
