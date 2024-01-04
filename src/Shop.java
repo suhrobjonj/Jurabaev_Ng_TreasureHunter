@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.Scanner;
 
 /**
@@ -24,14 +25,16 @@ public class Shop {
     private double markdown;
     private Hunter customer;
     private boolean secretMode = false;
+    private OutputWindow window;
 
     /**
      * The Shop constructor takes in a markdown value and leaves customer null until one enters the shop.
      *
      * @param markdown Percentage of markdown for selling items in decimal format.
      */
-    public Shop(double markdown, String secretMode) {
+    public Shop(double markdown, String secretMode, OutputWindow window) {
         this.markdown = markdown;
+        this.window = window;
         customer = null; // is set in the enter method
         if (secretMode.equals("s")) {
             this.secretMode = true;
@@ -48,16 +51,16 @@ public class Shop {
         customer = hunter;
 
         if (buyOrSell.equals("b")) {
-            System.out.println("Welcome to the shop! We have the finest wares in town.");
-            System.out.println("Currently we have the following items:");
-            System.out.println(inventory());
-            System.out.print("What're you lookin' to buy? ");
+            window.addTextToWindow("\n\nWelcome to the shop! We have the finest wares in town.", Color.BLACK);
+            window.addTextToWindow("Currently we have the following items:", Color.BLACK);
+            window.addTextToWindow(inventory(), Color.BLACK);
+            window.addTextToWindow("What're you lookin' to buy? ", Color.BLACK);
             String item = SCANNER.nextLine().toLowerCase();
             int cost = checkMarketPrice(item, true);
             if (cost == 0 && customer.hasItemInKit("sword")) {
-                System.out.println("We ain't got none of those.");
+                window.addTextToWindow("We ain't got none of those.", Color.BLACK);
             } else {
-                System.out.print("It'll cost you " + cost + " gold. Buy it (y/n)? ");
+                window.addTextToWindow("It'll cost you " + cost + " gold. Buy it (y/n)? ", Color.BLACK);
                 String option = SCANNER.nextLine().toLowerCase();
 
                 if (option.equals("y")) {
@@ -65,14 +68,14 @@ public class Shop {
                 }
             }
         } else {
-            System.out.println("What're you lookin' to sell? ");
-            System.out.print("You currently have the following items: " + customer.getInventory());
+            window.addTextToWindow("What're you lookin' to sell? ", Color.BLACK);
+            window.addTextToWindow("You currently have the following items: " + customer.getInventory(), Color.BLACK);
             String item = SCANNER.nextLine().toLowerCase();
             int cost = checkMarketPrice(item, false);
             if (cost == 0) {
-                System.out.println("We don't want none of those.");
+                window.addTextToWindow("We don't want none of those.", Color.RED);
             } else {
-                System.out.print("It'll get you " + cost + " gold. Sell it (y/n)? ");
+                window.addTextToWindow("It'll get you " + cost + " gold. Sell it (y/n)? ", Color.BLACK);
                 String option = SCANNER.nextLine().toLowerCase();
 
                 if (option.equals("y")) {
@@ -110,12 +113,12 @@ public class Shop {
     public void buyItem(String item) {
         int costOfItem = checkMarketPrice(item, true);
         if (customer.buyItem(item, costOfItem)) {
-            System.out.println("Ye' got yerself a " + item + ". Come again soon.");
+            window.addTextToWindow("Ye' got yerself a " + item + ". Come again soon.", Color.ORANGE);
         } else if (!customer.hasItemInKit("sword")){
-            System.out.println("Hmm, either you don't have enough gold or you've already got one of those!");
+            window.addTextToWindow("Hmm, either you don't have enough gold or you've already got one of those!", Color.RED);
         } else {
             customer.buyItem(item, 0);
-            System.out.println("Just take anything ye want! I don't want any trouble...");
+            window.addTextToWindow("Just take anything ye want! I don't want any trouble...", Color.BLACK);
         }
     }
 
@@ -127,9 +130,9 @@ public class Shop {
     public void sellItem(String item) {
         int buyBackPrice = checkMarketPrice(item, false);
         if (customer.sellItem(item, buyBackPrice)) {
-            System.out.println("Pleasure doin' business with you.");
+            window.addTextToWindow("Pleasure doin' business with you.", Color.BLACK);
         } else {
-            System.out.println("Stop stringin' me along!");
+            window.addTextToWindow("Stop stringin' me along!", Color.RED);
         }
     }
 

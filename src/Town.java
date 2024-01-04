@@ -16,6 +16,7 @@ public class Town {
     private boolean dugGold = false;
     private boolean itemCanBreak = true;
     private boolean samuraiMode = false;
+    private OutputWindow window;
 
     /**
      * The Town Constructor takes in a shop and the surrounding terrain, but leaves the hunter as null until one arrives.
@@ -138,9 +139,17 @@ public class Town {
 
     public String lookForTreasure() {
         int treasureIndx = (int) (Math.random() * 3);
+        int numTreasure = 0;
+        if (hunter.getTreasures()[0] != null) {
+            if (hunter.getTreasures()[1] != null) {
+                numTreasure = 1;
+            } else {
+                numTreasure = 2;
+            }
+        }
         if (townSearched) {
             return "You have already searched this town.";
-        } else if (hunter.addTreasure(treasures[treasureIndx], treasureIndx)) {
+        } else if (hunter.addTreasure(treasures[treasureIndx], numTreasure)) {
             townSearched = true;
             return "You found " + treasures[treasureIndx] + "!";
         } else {
